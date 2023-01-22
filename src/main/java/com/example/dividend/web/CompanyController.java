@@ -19,7 +19,9 @@ public class CompanyController {
 
     @GetMapping("/autocomplete")
     public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
-        return null;
+//        var result = this.companyService.autocomplete(keyword); // trie를 사용하는 로직
+        var result = this.companyService.getCompanyNamesByKeyword(keyword); // trie를 사용하지 않는 로직
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping
@@ -36,7 +38,7 @@ public class CompanyController {
         }
 
         Company company = this.companyService.save(ticker);
-
+        this.companyService.addAutocompleteKeyword(company.getName());  // 회사를 저장하는 시점에 이름 trie에 넣기
         return ResponseEntity.ok(company);
     }
 
