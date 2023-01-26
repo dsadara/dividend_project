@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "MEMBER")
+@Entity
 public class MemberEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class MemberEntity implements UserDetails {
 
     private String password;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;     // 권한을 두개 이상 가질 수 있기 때문에 리스트로 설정
 
     @Override

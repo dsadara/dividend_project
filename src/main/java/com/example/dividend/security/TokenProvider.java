@@ -1,11 +1,15 @@
 package com.example.dividend.security;
 
+import com.example.dividend.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -18,6 +22,8 @@ public class TokenProvider {
 
     private static final long TOKEN_EXPIRE_TIME = 1000 * 60 * 60;   // 1시간 = 1000 밀리세컨드 * 60 * 60
     private static final String KEY_ROLES = "roles";
+
+    private final MemberService memberService;
 
     @Value("{spring.jwt.secret}")
     private String secretkey;
@@ -47,6 +53,13 @@ public class TokenProvider {
 
     // 아래부터는 토큰 생성을 테스트해보기 위한 메소드들
 
+    // jwt 토큰으로부터 인증 정보를 가져오는 메소드
+    public Authentication getAuthentication(String jwt) {
+        UserDetails userDetails = this.memberService.loadUserByUsername(this.getUsername(jwt));
+        // 이 토큰은 사용자 정보와, 사용자 권한 정보를 포함하게 됨
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
     public String getUsername(String token) {
         return this.parseClaims(token).getSubject();
     }
@@ -56,7 +69,7 @@ public class TokenProvider {
         if (!StringUtils.hasText(token)) return false;
 
         var claims = this.parseClaims(token);
-        return claims.getExpiration().before(new Date());   // 토큰 만료 시간이 현재시간보다 이전인지(유효한지) 확인
+        return !claims.getExpiration().before(new Date());   // 토큰 만료 시간이 현재시간보다 이전인지(유효한지) 확인
     }
 
     // 토큰으로부터 claims를 파싱 (토큰 생성을 테스트하기 위함)
