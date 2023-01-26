@@ -17,6 +17,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
     implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.7.2'
