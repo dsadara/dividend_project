@@ -1,5 +1,6 @@
 package com.example.dividend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,11 +24,14 @@ public class MemberEntity implements UserDetails {
 
     private String username;
 
+    @JsonIgnore
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    // failed to lazily initialize a collection of role 해결을 위한 설정
     private List<String> roles;     // 권한을 두개 이상 가질 수 있기 때문에 리스트로 설정
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // roles를 SimpleGrantedAutority로 매핑
