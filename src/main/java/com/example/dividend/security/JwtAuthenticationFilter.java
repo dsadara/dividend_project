@@ -33,6 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 이제 Security Context에다가 인증 정보를 넣어줄 것임
             Authentication auth = this.tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
+
+            // [사용자명] -> 어떤URI : 어떤 사용자가 어떤 URI에 접근했는지 로깅
+            log.info(String.format("[%s]  -> %s", this.tokenProvider.getUsername(token), request.getRequestURI()));
         }
 
         // 필터 실행
